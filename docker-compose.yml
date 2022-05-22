@@ -12,7 +12,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
     image: common_php8/latest
-    container_name: common_php8
+    container_name: 'php8_${APP_NAME}'
     restart: unless-stopped
     tty: true
     environment:
@@ -26,7 +26,7 @@ services:
   # Nginx Service
   nginx:
     image: nginx:alpine
-    container_name: common_nginx
+    container_name: 'nginx_${APP_NAME}'
     restart: unless-stopped
     tty: true
     ports:
@@ -39,31 +39,29 @@ services:
   #Node Service
   node:
     image: node:alpine
-    container_name: common_node_alp
+    container_name: 'node_${APP_NAME}'
     restart: unless-stopped
     tty: true
     volumes:
       - ./src:/var/www
 
   #MySQL Services
-  common_mysql57:
+  mysql:
     image: mysql:5.7.22
-    container_name: common_mysql57
+    container_name: mysql_${APP_NAME}
     restart: unless-stopped
     tty: true
     ports:
-      - "3306:3306"
+      - "3307:3306"
     environment:
-      MYSQL_DATABASE: laravel
-      MYSQL_ROOT_PASSWORD: MY_SQL_ROOT_PASS
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
-    volumes:
-      - dbdata:/var/lib/mysql/
-      - ./mysql/my.cnf:/etc/mysql/my.cnf
-
   #Redis Service
-  common_redis:
+  redis:
     image: "redis:alpine"
     container_name: common_redis
     restart: unless-stopped
